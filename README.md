@@ -44,7 +44,7 @@ An error
 ```
 
 ## The problem
-The request takes 20s to complete. During that time the schema is refreshed. Refreshing the schema disposes of the request and causes an error.
+The request takes 20s to complete. During that time the schema is refreshed as gateway conf is `pollingInterval: 5_000`. Refreshing the schema disposes of the request and causes an error.
 
 This only happens if:
 * The schema refreshes during a live request
