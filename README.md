@@ -1,11 +1,12 @@
 ## Instructions
 
-`npm i --force` 
-`npm run compose`
-`npm run start-api`
-`npm start`
-Go to http://localhost:4000/graphql
-query for 
+* `nvm use`
+* `npm i --force` << mock uses an old version of `express-graphql`
+* `npm run compose`
+* `npm run start-api`
+* `npm start`
+* Go to http://localhost:4000/graphql
+* query for 
 ```
 query {
   hello
@@ -39,3 +40,11 @@ An error
   }
 }
 ```
+
+## The problem
+The request takes 20s to complete. During that time the schema is refreshed. Refreshing the schema disposes of the request and causes an error.
+
+This only happens if:
+* The schema refreshes during a live request
+* Using a graphql connector - using a REST one does not exhibit the behavior
+* Setting `operationHeaders` that use the `context` e.g. ```Authorization: "{context.headers['authorization']}",```, remvoing this does not show the bug
