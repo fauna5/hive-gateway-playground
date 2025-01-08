@@ -1,6 +1,6 @@
-## Instructions
+## Instructions to recreate the bug
 
-* `nvm use`
+* `nvm use 22`
 * `npm i --force` << mock uses an old version of `express-graphql`
 * `npm run compose`
 * `npm run start-api`
@@ -12,6 +12,8 @@ query {
   hello
 }
 ```
+
+## Outcomes
 
 ### Expected 
 A valid response
