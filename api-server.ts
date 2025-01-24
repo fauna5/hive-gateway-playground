@@ -10,13 +10,25 @@ const port = 3000;
 const schemaPath = path.join(__dirname, "api.schema.graphql");
 const schemaContent = fs.readFileSync(schemaPath, "utf8");
 
+let text = "Hello world!";
+
 const root = {
-  hello: () => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve("Hello world!");
-      }, 20000);
-    });
+  message: () => {
+    console.log("message");
+    return {
+      text,
+      isCurrent: true,
+    };
+  },
+  updateMessage: ({ input }) => {
+    console.log("updateMessage");
+    text = input.text;
+    return {
+      message: {
+        text: input.text,
+        isCurrent: true,
+      },
+    };
   },
 };
 
