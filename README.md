@@ -29,7 +29,7 @@ An error `Field isCurrent is not defined by type "MessageUpdateInput"`
 
 
 ## The problem
-`isCurrent` is a deprecated input field. It exists in the `supergraph.graphql` however it is not in the IntrospectionQuery
+`isCurrent` is a deprecated input field. It exists in the `supergraph.graphql` however it is stripped out by the hive gateway and does not exist in the IntrospectionQuery
 ```
 type Mutation @join__type(graph: GRAPH)  {
   updateMessage(input: MessageUpdateInput!) : Message!
