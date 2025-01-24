@@ -100,13 +100,6 @@ type Message @join__type(graph: GRAPH)  {
   isCurrent: Boolean @deprecated(reason: "Don't use anymore") 
 }
 
-type UpdateMessageMutation @join__type(graph: GRAPH)  {
-  message(
-    input: MessageUpdateInput!
-    old: String @deprecated(reason: "Don't use anymore") 
-  ): Message!
-}
-
 type Query @extraSchemaDefinitionDirective(
   directives: {transport: [{kind: "http", subgraph: "Graph", location: "http://localhost:3000/graphql", headers: [["Authorization", "{context.headers['authorization']}"]], options: {}}]}
 ) @join__type(graph: GRAPH)  {
@@ -114,7 +107,7 @@ type Query @extraSchemaDefinitionDirective(
 }
 
 type Mutation @join__type(graph: GRAPH)  {
-  updateMessage: UpdateMessageMutation!
+  updateMessage(input: MessageUpdateInput!) : Message!
 }
 
 input MessageUpdateInput @join__type(graph: GRAPH)  {

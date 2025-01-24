@@ -3,10 +3,6 @@ type Message {
   isCurrent: Boolean @deprecated(reason: "Don't use anymore") 
 }
 
-type UpdateMessageMutation {
-  message(input: MessageUpdateInput!, old: String @deprecated(reason: "Don't use anymore")): Message!
-}
-
 input MessageUpdateInput {
   text: String!
   isCurrent: Boolean @deprecated(reason: "Don't use anymore")
@@ -17,5 +13,5 @@ type Query {
 }
 
 type Mutation {
-  updateMessage: UpdateMessageMutation!
+  updateMessage(input: MessageUpdateInput!): Message!
 }

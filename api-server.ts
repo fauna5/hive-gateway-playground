@@ -11,23 +11,23 @@ const schemaPath = path.join(__dirname, "api.schema.graphql");
 const schemaContent = fs.readFileSync(schemaPath, "utf8");
 
 let text = "Hello world!";
+let isCurrent = true;
 
 const root = {
   message: () => {
     console.log("message");
     return {
       text,
-      isCurrent: true,
+      isCurrent,
     };
   },
   updateMessage: ({ input }) => {
     console.log("updateMessage");
     text = input.text;
+    isCurrent = input.isCurrent;
     return {
-      message: {
-        text: input.text,
-        isCurrent: true,
-      },
+      text,
+      isCurrent,
     };
   },
 };
