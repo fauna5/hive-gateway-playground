@@ -43,5 +43,6 @@ input MessageUpdateInput @join__type(graph: GRAPH)  {
 
 This causes issues with generating client schemas using the IntrospectionQuery
 
-This only happens if:
-* The deprecated field is an input field. Deprecated fields in query objects appear and are in the IntrospectionQuery.
+This only happens if the deprecated field is an input field. Deprecated fields in query objects appear as deprecated and are in the IntrospectionQuery.
+
+Whilst the graphiql (and IntrospectionQuery) do not have the deprecated field, i can actually use the mutation to update the backend. So this is purely down to an issue with the IntrospectionQuery
