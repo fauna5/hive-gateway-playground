@@ -1,3 +1,12 @@
+interface Greeting {
+  message: String!
+}
+
+type HelloGreeting implements Greeting {
+  message: String!
+  iconName: String!
+}
+
 type Query {
-  hello: String
+  hello: Greeting
 }

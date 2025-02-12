@@ -12,11 +12,11 @@ const schemaContent = fs.readFileSync(schemaPath, "utf8");
 
 const root = {
   hello: () => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve("Hello world!");
-      }, 20000);
-    });
+    return {
+      __typename: "HelloGreeting",
+      message: "Hello world!",
+      iconName: "wave",
+    };
   },
 };
 

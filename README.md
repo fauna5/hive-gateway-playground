@@ -1,52 +1,93 @@
+## Bug recreation: Missing types when using `createEncapsulateTransform`
+
+Using this schema (in file [api.schema.graphql](api.schema.graphql)) 
+```
+interface Greeting {
+  message: String!
+}
+
+type HelloGreeting implements Greeting {
+  message: String!
+}
+
+type Query {
+  hello: Greeting
+}
+```
+when creating a supergraph using GraphQL Mesh and transforming it using `createEncapsulateTransform({ name: "api" })` the resulting schema (in file [supergraph.graphql](supergraph.graphql)) does not have the `HelloGreeting` type. As a result, query response for `Query.api.hello.__typename` returns the interface `Greeting` and it is not possible to do `... on HelloGreeting` in the query to get specific fields for that type. This makes encapsulation unusable for us.
+
 ## Instructions to recreate the bug
 
 * `nvm use 22`
 * `npm i --force` << mock uses an old version of `express-graphql`
 * `npm run compose`
-* `npm run start-api`
-* `npm start`
+* `npm run start-api` (start the mock backend)
+* `npm start` (start the server)
 * Go to http://localhost:4000/graphql
 * query for 
 ```
-query {
-  hello
+query Test{
+  api {
+    hello {
+      message
+      __typename
+    }
+  }
 }
 ```
 
 ## Outcomes
 
 ### Expected 
-A valid response
+```
+{
+  "data": {
+    "api": {
+      "hello": {
+        "message": "Hello world!",
+        "__typename": "HelloGreeting" << type returned by api-server.ts
+      }
+    }
+  }
+}
+```
 
 ### Actual
 An error
 ```
 {
-  "errors": [
-    {
-      "message": "The operation was aborted. reason: Error: Executor was disposed.",
-      "path": [
-        "hello"
-      ],
-      "extensions": {
-        "code": "DOWNSTREAM_SERVICE_ERROR",
-        "request": {
-          "method": "POST",
-          "body": "{\"query\":\"{__typename hello}\"}"
-        }
+  "data": {
+    "api": {
+      "hello": {
+        "message": "Hello world!",
+        "__typename": "Greeting" << this is the interface, not the type and not what api-server.ts returned
       }
     }
-  ],
-  "data": {
-    "hello": null
   }
 }
 ```
 
 ## The problem
-The request takes 20s to complete. During that time the schema is refreshed as gateway conf is `pollingInterval: 5_000`. Refreshing the schema disposes of the request and causes an error.
+type `HelloGreeting` is not in the generated schema at `supergraph.graphql` however it is in the source schema `api.schema.graphql`. 
 
-This only happens if:
-* The schema refreshes during a live request
-* Using a graphql connector - using a REST one does not exhibit the behavior
-* Setting `operationHeaders` that use the `context` e.g. ```Authorization: "{context.headers['authorization']}",```, remvoing this does not show the bug
+### it works without encapsulation
+When i remove the transform `createEncapsulateTransform` the mesh works as expected.
+```
+query Test{
+  hello {
+    message
+    __typename
+  }
+}
+```
+returns
+```
+{
+  "data": {
+    "hello": {
+      "message": "Hello world!",
+      "__typename": "HelloGreeting"
+    }
+  }
+}
+```

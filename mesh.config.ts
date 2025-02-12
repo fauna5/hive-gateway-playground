@@ -16,6 +16,11 @@ export const composeConfig = defineConfig({
           Authorization: "{context.headers['authorization']}",
         },
       }),
+      transforms: [
+        createEncapsulateTransform({
+          name: "api",
+        }),
+      ],
     },
   ],
 });
