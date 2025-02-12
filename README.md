@@ -53,7 +53,6 @@ query Test{
 ```
 
 ### Actual
-An error
 ```
 {
   "data": {
