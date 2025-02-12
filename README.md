@@ -1,4 +1,4 @@
-## Bug recreation: Missing types when using `createEncapsulateTransform`
+## GraphQL Mesh bug recreation: Missing types when using `createEncapsulateTransform`
 
 Using this schema (in file [api.schema.graphql](api.schema.graphql)) 
 ```
