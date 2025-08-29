@@ -1,0 +1,54 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Nested Data API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/data": {
+      "get": {
+        "summary": "Get nested data",
+        "operationId": "getData",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["field1"],
+                  "properties": {
+                    "field1": {
+                      "type": "object",
+                      "required": ["subfield1"],
+                      "properties": {
+                        "subfield1": {
+                          "type": "object",
+                          "required": ["leafNode1", "leafNode2", "leafnode3"],
+                          "properties": {
+                            "leafNode1": {
+                              "type": "string",
+                              "nullable": true
+                            },
+                            "leafNode2": {
+                              "type": "string"
+                            },
+                            "leafnode3": {
+                              "type": "string",
+                              "nullable": false
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {}
+}

@@ -7,5 +7,5 @@ export const gatewayConfig = defineConfig({
     console.log(`[${new Date().toISOString()}]`, "Reading supergraph.graphql");
     return fs.promises.readFile("supergraph.graphql", "utf8");
   },
-  pollingInterval: 5_000,
+  pollingInterval: 10_000,
 });
