@@ -11,12 +11,23 @@ const schemaPath = path.join(__dirname, "api.schema.graphql");
 const schemaContent = fs.readFileSync(schemaPath, "utf8");
 
 const root = {
+  Date: {
+    parseValue: (value: string) => value,
+    serialize: (value: string) => value,
+  },
   hello: () => {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve("Hello world!");
       }, 20000);
     });
+  },
+  updatePaymentDate: ({ input }: { input: { id: string; date: string } }) => {
+    console.log("Received input:", input);
+    return {
+      success: true,
+      newDate: input.date,
+    };
   },
 };
 
