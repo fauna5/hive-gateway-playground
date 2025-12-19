@@ -4,6 +4,11 @@
     "title": "Nested Data API",
     "version": "1.0.0"
   },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
   "paths": {
     "/data": {
       "get": {
@@ -48,7 +53,66 @@
           }
         }
       }
+    },
+    "/payments/update-date": {
+      "post": {
+        "summary": "Update payment date",
+        "operationId": "updatePaymentDate",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePaymentDateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Payment date updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
-  "components": {}
+  "components": {
+    "schemas": {
+      "UpdatePaymentDateRequest": {
+        "type": "object",
+        "required": ["id", "date"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Payment ID"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{6}$",
+            "description": "Payment date in format YYYY-MM-DD HH:MM:SS.FFFFFF",
+            "example": "2024-12-17 10:30:00.000000"
+          }
+        }
+      },
+      "PaymentResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "newDate": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
 }

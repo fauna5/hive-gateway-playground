@@ -9,11 +9,11 @@ schema
     
     @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
-  import: ["@transport", "@extraSchemaDefinitionDirective", "@httpOperation"]
+  import: ["@regexp", "@typescript", "@httpOperation", "@transport", "@extraSchemaDefinitionDirective"]
 )
   {
     query: Query
-    
+    mutation: Mutation
     
   }
 
@@ -88,21 +88,12 @@ schema
   
   
 enum join__Graph {
-  GRAPH @join__graph(name: "Graph", url: "http://localhost:3000/graphql") 
-  OPEN_API @join__graph(name: "OpenAPI", url: "") 
+  OPEN_API @join__graph(name: "OpenAPI", url: "http://localhost:3000") 
 }
 
-directive @transport(
-  kind: String!
-  subgraph: String!
-  location: String!
-  headers: [[String]]
-  options: TransportOptions
-  queryStringOptions: ObjMap
-  queryParams: [[String]]
-) repeatable on SCHEMA
+directive @regexp(subgraph: String, pattern: String)  repeatable on SCALAR
 
-directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
+directive @typescript(subgraph: String, type: String)  repeatable on SCALAR | ENUM
 
 directive @httpOperation(
   subgraph: String
@@ -117,16 +108,29 @@ directive @httpOperation(
   queryStringOptions: ObjMap
 ) repeatable on FIELD_DEFINITION
 
-scalar TransportOptions @join__type(graph: GRAPH) 
+directive @transport(
+  subgraph: String
+  kind: String
+  location: String
+  headers: [[String]]
+  queryStringOptions: ObjMap
+  queryParams: [[String]]
+) repeatable on SCHEMA
 
-scalar _DirectiveExtensions @join__type(graph: GRAPH)  @join__type(graph: OPEN_API) 
+directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
+
+scalar mutationInput_updatePaymentDate_input_date @regexp(
+  subgraph: "OpenAPI"
+  pattern: "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{6}$"
+) @typescript(subgraph: "OpenAPI", type: "string")  @join__type(graph: OPEN_API) 
 
 scalar ObjMap @join__type(graph: OPEN_API) 
 
+scalar _DirectiveExtensions @join__type(graph: OPEN_API) 
+
 type Query @extraSchemaDefinitionDirective(
-  directives: {transport: [{kind: "http", subgraph: "Graph", location: "http://localhost:3000/graphql", headers: [["Authorization", "{context.headers['authorization']}"]], options: {}}]}
-) @extraSchemaDefinitionDirective(directives: {transport: [{subgraph: "OpenAPI", kind: "rest"}]})  @join__type(graph: GRAPH)  @join__type(graph: OPEN_API)  {
-  hello: String @join__field(graph: GRAPH) 
+  directives: {transport: [{subgraph: "OpenAPI", kind: "rest", location: "http://localhost:3000"}]}
+) @join__type(graph: OPEN_API)  {
   """
   Get nested data
   """
@@ -135,7 +139,7 @@ type Query @extraSchemaDefinitionDirective(
     path: "/data"
     operationSpecificHeaders: [["accept", "application/json"]]
     httpMethod: GET
-  ) @join__field(graph: OPEN_API) 
+  )
 }
 
 type getData_200_response @join__type(graph: OPEN_API)  {
@@ -152,6 +156,23 @@ type query_getData_field1_subfield1 @join__type(graph: OPEN_API)  {
   leafnode3: String!
 }
 
+type Mutation @join__type(graph: OPEN_API)  {
+  """
+  Update payment date
+  """
+  updatePaymentDate(input: UpdatePaymentDateRequest_Input) : PaymentResponse @httpOperation(
+    subgraph: "OpenAPI"
+    path: "/payments/update-date"
+    operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]]
+    httpMethod: POST
+  )
+}
+
+type PaymentResponse @join__type(graph: OPEN_API)  {
+  success: Boolean
+  newDate: String
+}
+
 enum HTTPMethod @join__type(graph: OPEN_API)  {
   GET @join__enumValue(graph: OPEN_API) 
   HEAD @join__enumValue(graph: OPEN_API) 
@@ -162,4 +183,12 @@ enum HTTPMethod @join__type(graph: OPEN_API)  {
   OPTIONS @join__enumValue(graph: OPEN_API) 
   TRACE @join__enumValue(graph: OPEN_API) 
   PATCH @join__enumValue(graph: OPEN_API) 
+}
+
+input UpdatePaymentDateRequest_Input @join__type(graph: OPEN_API)  {
+  """
+  Payment ID
+  """
+  id: String!
+  date: mutationInput_updatePaymentDate_input_date!
 }

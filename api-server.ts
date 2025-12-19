@@ -11,12 +11,23 @@ const schemaPath = path.join(__dirname, "api.schema.graphql");
 const schemaContent = fs.readFileSync(schemaPath, "utf8");
 
 const root = {
+  Date: {
+    parseValue: (value: string) => value,
+    serialize: (value: string) => value,
+  },
   hello: () => {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve("Hello world!");
       }, 20000);
     });
+  },
+  updatePaymentDate: ({ input }: { input: { id: string; date: string } }) => {
+    console.log("Received input:", input);
+    return {
+      success: true,
+      newDate: input.date,
+    };
   },
 };
 
@@ -89,6 +100,16 @@ app.get("/data", (_req, res) => {
         leafnode3: "value-3",
       },
     },
+  });
+});
+
+// POST endpoint for updating payment date - accepts ANY date string
+app.post("/payments/update-date", express.json(), (req, res) => {
+  const { id, date } = req.body;
+
+  res.json({
+    success: true,
+    newDate: date,
   });
 });
 

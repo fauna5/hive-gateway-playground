@@ -1,5 +1,4 @@
 import { defineConfig } from "@graphql-hive/gateway";
-import { Console } from "console";
 import fs from "fs";
 
 export const gatewayConfig = defineConfig({
