@@ -103,6 +103,16 @@ app.get("/data", (_req, res) => {
   });
 });
 
+// POST endpoint for updating payment date - accepts ANY date string
+app.post("/payments/update-date", express.json(), (req, res) => {
+  const { id, date } = req.body;
+
+  res.json({
+    success: true,
+    newDate: date,
+  });
+});
+
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}/graphql`);
 });
